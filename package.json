@@ -1,1 +1,1 @@
-{"type":"module"}
+{"description":"A fast, dependency-free Markdown renderer that returns exactly the HTML marked 18.1.3 renders with its default options.","license":"MIT","name":"fast-markdown-render","scripts":{"start":"node main.ts"},"type":"module","version":"1.0.0"}
