@@ -1,25 +1,16 @@
-// Driver for the fast-markdown-render entry: it reads every case from
-// /input/cases.json (or MAKEFUN_INPUT_DIR), renders each one on its own
-// with parse() from parse.js, and writes /output/html.json (or
-// MAKEFUN_OUTPUT_DIR) as a JSON array of the HTML strings, in case order.
-// Runs on Node 22 with no build step and no dependencies.
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { parse } from "./parse.js";
 
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { parse } from './parse.js';
+const inputDir = process.env.MAKEFUN_INPUT_DIR || "/input";
+const outputDir = process.env.MAKEFUN_OUTPUT_DIR || "/output";
 
-const inputDir = process.env.MAKEFUN_INPUT_DIR ?? '/input';
-const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+type Case = { id: string; markdown: string };
 
-const cases = JSON.parse(readFileSync(join(inputDir, 'cases.json'), 'utf8')) as {
-  id: string;
-  markdown: string;
-}[];
-
-const html: string[] = new Array(cases.length);
-for (let i = 0; i < cases.length; i++) {
-  html[i] = parse(cases[i].markdown);
-}
+const cases = JSON.parse(
+  readFileSync(`${inputDir}/cases.json`, "utf8")
+) as Case[];
+const html: string[] = [];
+for (const c of cases) html.push(parse(c.markdown));
 
 mkdirSync(outputDir, { recursive: true });
-writeFileSync(join(outputDir, 'html.json'), JSON.stringify(html));
+writeFileSync(`${outputDir}/html.json`, JSON.stringify(html));
